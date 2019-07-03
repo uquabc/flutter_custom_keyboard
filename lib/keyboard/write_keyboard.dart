@@ -73,6 +73,7 @@ class _WriteKeyboardState extends State<WriteKeyboard> {
                 color: Colors.red,
                 width: double.infinity,
                 height: 50,
+                child: Text('这是我要自定义的内容啊'),
               ),
               Expanded(
                 child: child,
