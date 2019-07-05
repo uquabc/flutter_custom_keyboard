@@ -4,5 +4,4 @@
 
 <img src='https://github.com/cnting/flutter_custom_keyboard/blob/master/img/demo1.jpg' width=200>
 
-#### 问题
-* 多行输入问题暂未搞定
+
