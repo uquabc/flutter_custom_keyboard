@@ -138,8 +138,7 @@ class _WriteKeyboardState extends State<WriteKeyboard> {
             buildSpaceButton(),
             buildTextButton('-'),
             buildTextButton('.'),
-            buildTextButton('换行',
-                fontSize: 16, onTap: () => widget.controller.newLineAction())
+            buildNewlineButton()
           ],
         )
       ],
@@ -198,8 +197,7 @@ class _WriteKeyboardState extends State<WriteKeyboard> {
               buildSpaceButton(),
               buildTextButton('-'),
               buildTextButton('.'),
-              buildTextButton('换行',
-                  fontSize: 16, onTap: () => widget.controller.newLineAction())
+              buildNewlineButton()
             ],
           ),
         )
@@ -259,8 +257,7 @@ class _WriteKeyboardState extends State<WriteKeyboard> {
               buildSpaceButton(),
               buildTextButton('-'),
               buildTextButton('.'),
-              buildTextButton('换行',
-                  fontSize: 16, onTap: () => widget.controller.newLineAction())
+              buildNewlineButton()
             ],
           ),
         )
@@ -282,6 +279,14 @@ class _WriteKeyboardState extends State<WriteKeyboard> {
           ),
         ),
         () => widget.controller.addText(" "));
+  }
+
+  Widget buildNewlineButton() {
+    return buildTextButton('换行', fontSize: 16, onTap: () {
+//      return widget.controller.addText(NewlineText.flag);
+      return widget.controller.addText('\n');
+//          return widget.controller.newLineAction();
+    });
   }
 
   Widget buildTextButton(

@@ -39,8 +39,8 @@ class _MyHomePageState extends State<MyHomePage> {
           return Scaffold(
             body: Center(
               child: TextField(
-                keyboardType: WriteKeyboard.inputType,
 //                keyboardType: TextInputType.multiline,
+                keyboardType: WriteKeyboard.inputType,
                 textInputAction: TextInputAction.newline,
                 maxLines: null,
               ),
@@ -51,3 +51,5 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+
+///不支持多行的原因：https://github.com/flutter/engine/blob/master/shell/platform/android/io/flutter/plugin/editing/TextInputPlugin.java
