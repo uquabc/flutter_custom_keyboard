@@ -283,9 +283,7 @@ class _WriteKeyboardState extends State<WriteKeyboard> {
 
   Widget buildNewlineButton() {
     return buildTextButton('换行', fontSize: 16, onTap: () {
-//      return widget.controller.addText(NewlineText.flag);
       return widget.controller.addText('\n');
-//          return widget.controller.newLineAction();
     });
   }
 

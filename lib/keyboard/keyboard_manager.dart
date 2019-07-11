@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -109,7 +110,8 @@ class CoolKeyboard {
           exception: exception,
           stack: stack,
           library: 'services library',
-          context: 'during a platform message response callback',
+          context:
+              StringProperty('', 'during a platform message response callback'),
         ));
       }
     });
@@ -193,12 +195,14 @@ class CoolKeyboard {
 class KeyboardConfig {
   final KeyboardBuilder builder;
   final GetKeyboardHeight getHeight;
+
   const KeyboardConfig({this.builder, this.getHeight});
 }
 
 class InputClient {
   final int connectionId;
   final TextInputConfiguration configuration;
+
   const InputClient({this.connectionId, this.configuration});
 
   factory InputClient.fromJSON(List<dynamic> encoded) {
@@ -301,6 +305,7 @@ class CKTextInputType extends TextInputType {
 class KeyboardPage extends StatefulWidget {
   final Widget child;
   final double height;
+
   const KeyboardPage({this.child, this.height, Key key}) : super(key: key);
 
   @override

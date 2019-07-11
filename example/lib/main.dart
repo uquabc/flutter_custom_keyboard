@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'keyboard/keyboard_manager.dart';
-import 'keyboard/keyboard_media_query.dart';
-import 'keyboard/write_keyboard.dart';
+import 'package:flutter_custom_keyboard/keyboard.dart';
 
 void main() => runApp(MyApp());
 
@@ -39,7 +36,6 @@ class _MyHomePageState extends State<MyHomePage> {
           return Scaffold(
             body: Center(
               child: TextField(
-//                keyboardType: TextInputType.multiline,
                 keyboardType: WriteKeyboard.inputType,
                 textInputAction: TextInputAction.newline,
                 maxLines: null,
@@ -51,5 +47,3 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
-
-///不支持多行的原因：https://github.com/flutter/engine/blob/master/shell/platform/android/io/flutter/plugin/editing/TextInputPlugin.java
