@@ -324,12 +324,14 @@ class _WriteKeyboardState extends State<WriteKeyboard> {
     return ConstrainedBox(
         constraints:
             BoxConstraints(minWidth: buttonWidth, minHeight: 45, maxHeight: 45),
-        child: GestureDetector(
-          behavior: HitTestBehavior.translucent,
-          child: Center(
-            child: widget,
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            child: Center(
+              child: widget,
+            ),
+            onTap: onTap,
           ),
-          onTap: onTap,
         ));
   }
 }
