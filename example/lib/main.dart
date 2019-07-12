@@ -49,23 +49,25 @@ class _MyHomePageState extends State<MyHomePage> {
           preferredSize: Size.fromHeight(50),
         );
       },
-      footWidget: GridView.count(
-        crossAxisCount: 3,
-        childAspectRatio: 2.5,
-        children: [
-          Text('QQQ'),
-          Text('QQQ'),
-          Text('QQQ'),
-          Text('QQQ'),
-          Text('QQQ'),
-          Text('QQQ'),
-          Text('QQQ'),
-          Text('QQQ'),
-          Text('QQQ'),
-          Text('QQQ'),
-          Text('QQQ'),
-          Text('QQQ'),
-        ],
+      footWidget: Builder(
+        builder: (context) => GridView.count(
+          crossAxisCount: 3,
+          childAspectRatio: 2.5,
+          children: [
+            Text('QQQ'),
+            Text('QQQ'),
+            Text('QQQ'),
+            Text('QQQ'),
+            Text('QQQ'),
+            Text('QQQ'),
+            Text('QQQ'),
+            Text('QQQ'),
+            Text('QQQ'),
+            Text('QQQ'),
+            Text('QQQ'),
+            Text('QQQ'),
+          ],
+        ),
       ),
       expandWidget: (isExpand) => Padding(
             child: Icon(
@@ -87,7 +89,9 @@ class _MyHomePageState extends State<MyHomePage> {
               onTap: () {
                 CoolKeyboard.hideKeyboard();
               },
-              child: Center(
+              child: Container(
+                alignment: Alignment.bottomCenter,
+                margin: EdgeInsets.only(bottom: 20),
                 child: TextField(
                   keyboardType: WriteKeyboard.inputType,
                   textInputAction: TextInputAction.newline,

@@ -82,7 +82,7 @@ class _WriteKeyboardState extends State<WriteKeyboard> {
                   index: isExpandFooter ? 1 : 0,
                   children: <Widget>[
                     child,
-                    widget.keyboardBarBuilder.footWidget
+                    widget.keyboardBarBuilder.footWidget.build(context)
                   ],
                 ),
               )
@@ -328,7 +328,7 @@ class _WriteKeyboardState extends State<WriteKeyboard> {
 }
 
 class KeyboardBarBuilder {
-  final Widget footWidget;
+  final Builder footWidget;
   final PreferredSizeWidget Function(BuildContext context, Widget expandWidget)
       barBuilder;
   final Widget Function(bool isExpand) expandWidget;
