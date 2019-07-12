@@ -150,6 +150,12 @@ class CoolKeyboard {
     Overlay.of(_context).insert(_keyboardEntry);
   }
 
+  static updateKeyboard() {
+    if (_keyboardEntry != null) {
+      _keyboardEntry.markNeedsBuild();
+    }
+  }
+
   static hideKeyboard({bool animation = true}) {
     if (_keyboardEntry != null && _pageKey != null) {
       _keyboardHeight = null;
