@@ -280,7 +280,7 @@ class _WriteKeyboardState extends State<WriteKeyboard> {
           margin: EdgeInsets.all(5),
           alignment: Alignment.center,
           decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5), color: Colors.grey),
+              borderRadius: BorderRadius.circular(5), color: Color(0xFFDEDEDE)),
           child: Text(
             '空格',
             style: TextStyle(fontSize: 16),
