@@ -33,7 +33,7 @@ class CoolKeyboard {
   static interceptorInput() {
     if (isInterceptor) return;
     isInterceptor = true;
-    BinaryMessages.setMockMessageHandler("flutter/textinput",
+    defaultBinaryMessenger.setMockMessageHandler("flutter/textinput",
         (ByteData data) async {
       var methodCall = _codec.decodeMethodCall(data);
       switch (methodCall.method) {
@@ -79,8 +79,10 @@ class CoolKeyboard {
                     _keyboardController.client.connectionId,
                     _keyboardController.value.toJSON()
                   ]);
-                  BinaryMessages.handlePlatformMessage("flutter/textinput",
-                      _codec.encodeMethodCall(callbackMethodCall), (data) {});
+                  defaultBinaryMessenger.handlePlatformMessage(
+                      "flutter/textinput",
+                      _codec.encodeMethodCall(callbackMethodCall),
+                      (data) {});
                 });
             }
           });
@@ -187,7 +189,7 @@ class CoolKeyboard {
   static sendPerformAction(TextInputAction action) {
     var callbackMethodCall = MethodCall("TextInputClient.performAction",
         [_keyboardController.client.connectionId, action.toString()]);
-    BinaryMessages.handlePlatformMessage("flutter/textinput",
+    defaultBinaryMessenger.handlePlatformMessage("flutter/textinput",
         _codec.encodeMethodCall(callbackMethodCall), (data) {});
   }
 }
@@ -320,7 +322,6 @@ class KeyboardPageState extends State<KeyboardPage>
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     animationController = new AnimationController(
         duration: new Duration(milliseconds: 100), vsync: this)
@@ -340,12 +341,12 @@ class KeyboardPageState extends State<KeyboardPage>
 
   @override
   void dispose() {
-    super.dispose();
     if (animationController.status == AnimationStatus.forward ||
         animationController.status == AnimationStatus.reverse) {
       animationController.notifyStatusListeners(AnimationStatus.dismissed);
     }
     animationController.dispose();
+    super.dispose();
   }
 
   exitKeyboard() {

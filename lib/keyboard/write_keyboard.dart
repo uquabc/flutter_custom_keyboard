@@ -13,21 +13,23 @@ class WriteKeyboard extends StatefulWidget {
       const CKTextInputType(name: 'WriteKeyboard');
 
   static double getHeight(BuildContext ctx) {
-//    MediaQueryData mediaQuery = MediaQuery.of(ctx);
-//    return mediaQuery.size.width / 3 / 2 * 4;
     return 200.0 + 50.0;
   }
 
   final KeyboardController controller;
+  final KeyboardBarBuilder keyboardBarBuilder;
 
-  const WriteKeyboard({this.controller});
+  const WriteKeyboard({this.controller, this.keyboardBarBuilder});
 
-  static register() {
+  static register(KeyboardBarBuilder builder) {
     CoolKeyboard.addKeyboard(
         WriteKeyboard.inputType,
         KeyboardConfig(
             builder: (context, controller) {
-              return WriteKeyboard(controller: controller);
+              return WriteKeyboard(
+                controller: controller,
+                keyboardBarBuilder: builder,
+              );
             },
             getHeight: WriteKeyboard.getHeight));
   }
@@ -40,6 +42,7 @@ class _WriteKeyboardState extends State<WriteKeyboard> {
   static const TYPE_MORE = 4;
   var type = TYPE_NORMAL;
   var buttonWidth = 0.0;
+  bool isExpandFooter = false;
 
   @override
   Widget build(BuildContext context) {
@@ -69,14 +72,19 @@ class _WriteKeyboardState extends State<WriteKeyboard> {
           ),
           child: Column(
             children: <Widget>[
-              Container(
-                color: Colors.red,
-                width: double.infinity,
-                height: 50,
-                child: Text('这是我要自定义的内容啊'),
-              ),
+              widget.keyboardBarBuilder.build(context, () {
+                setState(() {
+                  isExpandFooter = !isExpandFooter;
+                });
+              }, isExpandFooter),
               Expanded(
-                child: child,
+                child: IndexedStack(
+                  index: isExpandFooter ? 1 : 0,
+                  children: <Widget>[
+                    child,
+                    widget.keyboardBarBuilder.footWidget
+                  ],
+                ),
               )
             ],
           )),
@@ -314,6 +322,25 @@ class _WriteKeyboardState extends State<WriteKeyboard> {
           child: Center(
             child: widget,
           ),
+          onTap: onTap,
+        ));
+  }
+}
+
+class KeyboardBarBuilder {
+  final Widget footWidget;
+  final PreferredSizeWidget Function(BuildContext context, Widget expandWidget)
+      barBuilder;
+  final Widget Function(bool isExpand) expandWidget;
+
+  const KeyboardBarBuilder(
+      {this.barBuilder, this.expandWidget, this.footWidget});
+
+  Widget build(context, onTap, isExpand) {
+    return barBuilder(
+        context,
+        GestureDetector(
+          child: expandWidget(isExpand),
           onTap: onTap,
         ));
   }
