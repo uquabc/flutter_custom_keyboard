@@ -290,9 +290,18 @@ class _WriteKeyboardState extends State<WriteKeyboard> {
   }
 
   Widget buildNewlineButton() {
-    return buildTextButton('换行', fontSize: 16, onTap: () {
-      return widget.controller.addText('\n');
-    });
+    print(
+        '===>widget.controller.client.configuration.inputAction:${widget.controller.client.configuration.inputAction}');
+    if (widget.controller.client.configuration.inputAction ==
+        TextInputAction.done) {
+      return buildTextButton('完成', fontSize: 16, onTap: () {
+        return widget.controller.doneAction();
+      });
+    } else {
+      return buildTextButton('换行', fontSize: 16, onTap: () {
+        return widget.controller.addText('\n');
+      });
+    }
   }
 
   Widget buildTextButton(
