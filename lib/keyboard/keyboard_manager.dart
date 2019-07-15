@@ -16,7 +16,9 @@ class CoolKeyboard {
   static JSONMethodCodec _codec = const JSONMethodCodec();
   static KeyboardConfig _currentKeyboard;
   static Map<CKTextInputType, KeyboardConfig> _keyboards = {};
+
   static BuildContext _context;
+  static KeyboardMediaQueryState _ancestorState;
   static OverlayEntry _keyboardEntry;
   static KeyboardController _keyboardController;
   static GlobalKey<KeyboardPageState> _pageKey;
@@ -33,7 +35,7 @@ class CoolKeyboard {
   static interceptorInput() {
     if (isInterceptor) return;
     isInterceptor = true;
-    defaultBinaryMessenger.setMockMessageHandler("flutter/textinput",
+    defaultBinaryMessenger.setMockMessageHandler(SystemChannels.textInput.name,
         (ByteData data) async {
       var methodCall = _codec.decodeMethodCall(data);
       switch (methodCall.method) {
@@ -42,7 +44,8 @@ class CoolKeyboard {
             openKeyboard();
             return _codec.encodeSuccessEnvelope(null);
           } else {
-            return await _sendPlatformMessage("flutter/textinput", data);
+            return await _sendPlatformMessage(
+                SystemChannels.textInput.name, data);
           }
           break;
         case 'TextInput.hide':
@@ -50,7 +53,8 @@ class CoolKeyboard {
             hideKeyboard();
             return _codec.encodeSuccessEnvelope(null);
           } else {
-            return await _sendPlatformMessage("flutter/textinput", data);
+            return await _sendPlatformMessage(
+                SystemChannels.textInput.name, data);
           }
           break;
         case 'TextInput.setEditingState':
@@ -80,14 +84,14 @@ class CoolKeyboard {
                     _keyboardController.value.toJSON()
                   ]);
                   defaultBinaryMessenger.handlePlatformMessage(
-                      "flutter/textinput",
+                      SystemChannels.textInput.name,
                       _codec.encodeMethodCall(callbackMethodCall),
                       (data) {});
                 });
             }
           });
           if (client != null) {
-            await _sendPlatformMessage("flutter/textinput",
+            await _sendPlatformMessage(SystemChannels.textInput.name,
                 _codec.encodeMethodCall(MethodCall('TextInput.hide')));
             return _codec.encodeSuccessEnvelope(null);
           } else {
@@ -96,9 +100,16 @@ class CoolKeyboard {
           }
           break;
       }
-      ByteData response = await _sendPlatformMessage("flutter/textinput", data);
+      ByteData response =
+          await _sendPlatformMessage(SystemChannels.textInput.name, data);
       return response;
     });
+  }
+
+  static refreshAncestor(BuildContext context) {
+    _context = context;
+    _ancestorState = _context
+        .ancestorStateOfType(const TypeMatcher<KeyboardMediaQueryState>());
   }
 
   static Future<ByteData> _sendPlatformMessage(
@@ -128,10 +139,7 @@ class CoolKeyboard {
     if (_keyboardEntry != null) return;
     _pageKey = GlobalKey<KeyboardPageState>();
     _keyboardHeight = _currentKeyboard.getHeight(_context);
-    KeyboardMediaQueryState queryState = _context
-            .ancestorStateOfType(const TypeMatcher<KeyboardMediaQueryState>())
-        as KeyboardMediaQueryState;
-    queryState.update();
+    _ancestorState.update();
 
     var tempKey = _pageKey;
     _keyboardEntry = OverlayEntry(builder: (ctx) {
@@ -177,11 +185,7 @@ class CoolKeyboard {
       }
     }
     _pageKey = null;
-
-    KeyboardMediaQueryState queryState = _context
-            .ancestorStateOfType(const TypeMatcher<KeyboardMediaQueryState>())
-        as KeyboardMediaQueryState;
-    queryState.update();
+    _ancestorState.update();
   }
 
   static clearKeyboard() {
