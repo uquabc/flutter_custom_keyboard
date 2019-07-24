@@ -21,7 +21,7 @@ class WriteKeyboard extends StatefulWidget {
   const WriteKeyboard({this.controller, this.keyboardBarBuilder});
 
   static register(KeyboardBarBuilder builder) {
-    CoolKeyboard.addKeyboard(
+    KeyboardManager.addKeyboard(
         WriteKeyboard.inputType,
         KeyboardConfig(
             builder: (context, controller) {

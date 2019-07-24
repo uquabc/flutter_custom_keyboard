@@ -5,8 +5,7 @@ import 'keyboard_manager.dart';
 class KeyboardController extends ValueNotifier<TextEditingValue> {
   final InputClient client;
 
-  KeyboardController({TextEditingValue value, this.client})
-      : super(value == null ? TextEditingValue.empty : value);
+  KeyboardController({TextEditingValue value, this.client}) : super(value == null ? TextEditingValue.empty : value);
 
   /// The current string the user is editing.
   String get text => value.text;
@@ -16,10 +15,8 @@ class KeyboardController extends ValueNotifier<TextEditingValue> {
   /// this value should only be set between frames, e.g. in response to user
   /// actions, not during the build, layout, or paint phases.
   set text(String newText) {
-    value = value.copyWith(
-        text: newText,
-        selection: const TextSelection.collapsed(offset: -1),
-        composing: TextRange.empty);
+    value =
+        value.copyWith(text: newText, selection: const TextSelection.collapsed(offset: -1), composing: TextRange.empty);
   }
 
   /// The currently selected [text].
@@ -73,24 +70,18 @@ class KeyboardController extends ValueNotifier<TextEditingValue> {
       newText = selection.textBefore(text) + selection.textAfter(text);
       value = TextEditingValue(
           text: newText,
-          selection: selection.copyWith(
-              baseOffset: selection.baseOffset,
-              extentOffset: selection.baseOffset));
+          selection: selection.copyWith(baseOffset: selection.baseOffset, extentOffset: selection.baseOffset));
     } else {
-      newText = text.substring(0, selection.baseOffset - 1) +
-          selection.textAfter(text);
+      newText = text.substring(0, selection.baseOffset - 1) + selection.textAfter(text);
       value = TextEditingValue(
           text: newText,
-          selection: selection.copyWith(
-              baseOffset: selection.baseOffset - 1,
-              extentOffset: selection.baseOffset - 1));
+          selection: selection.copyWith(baseOffset: selection.baseOffset - 1, extentOffset: selection.baseOffset - 1));
     }
   }
 
   /// 在光标位置添加文字,一般用于键盘输入
   addText(String insertText) {
-    String newText =
-        selection.textBefore(text) + insertText + selection.textAfter(text);
+    String newText = selection.textBefore(text) + insertText + selection.textAfter(text);
     value = TextEditingValue(
         text: newText,
         selection: selection.copyWith(
@@ -100,21 +91,21 @@ class KeyboardController extends ValueNotifier<TextEditingValue> {
 
   /// 完成
   doneAction() {
-    CoolKeyboard.sendPerformAction(TextInputAction.done);
+    KeyboardManager.sendPerformAction(TextInputAction.done);
   }
 
   /// 下一个
   nextAction() {
-    CoolKeyboard.sendPerformAction(TextInputAction.next);
+    KeyboardManager.sendPerformAction(TextInputAction.next);
   }
 
   /// 换行
   newLineAction() {
-    CoolKeyboard.sendPerformAction(TextInputAction.newline);
+    KeyboardManager.sendPerformAction(TextInputAction.newline);
   }
 
   ///发送其他Action
   sendPerformAction(TextInputAction action) {
-    CoolKeyboard.sendPerformAction(action);
+    KeyboardManager.sendPerformAction(action);
   }
 }

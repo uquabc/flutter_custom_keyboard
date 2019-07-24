@@ -11,7 +11,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(),
     );
   }
 }
@@ -28,6 +28,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
+    //1.KeyboardMediaQuery计算屏幕高度
     return KeyboardMediaQuery(
       child: Builder(
         builder: (context) {
@@ -35,7 +36,8 @@ class _MyHomePageState extends State<MyHomePage> {
             body: GestureDetector(
               behavior: HitTestBehavior.translucent,
               onTap: () {
-                CoolKeyboard.hideKeyboard();
+                //点击其他地方隐藏键盘
+                KeyboardManager.hideKeyboard();
               },
               child: MyTextField(),
             ),
@@ -55,59 +57,70 @@ class _MyTextFieldState extends State<MyTextField> {
   @override
   void initState() {
     super.initState();
-    WriteKeyboard.register(keyboardBarBuilder);
-    CoolKeyboard.init(context);
+    //2.注册键盘
+    WriteKeyboard.register(_getBarBuilder());
+    //3.初始化键盘
+    KeyboardManager.init(context);
   }
 
-  var keyboardBarBuilder = KeyboardBarBuilder(
-      barBuilder: (context, expandWidget) {
-        return PreferredSize(
-          child: Container(
-            height: 50,
-            width: double.infinity,
-            color: Colors.grey,
-            child: Row(children: [
-              Expanded(child: Text('AAA')),
-              Expanded(child: Text('BBB')),
-              Expanded(child: Text('CCC')),
-              expandWidget
-            ]),
-          ),
-          preferredSize: Size.fromHeight(50),
-        );
-      },
-      footWidget: Builder(
-        builder: (context) => GridView.count(
-          crossAxisCount: 3,
-          childAspectRatio: 2.5,
-          children: [
-            Text('QQQ'),
-            Text('QQQ'),
-            Text('QQQ'),
-            Text('QQQ'),
-            Text('QQQ'),
-            Text('QQQ'),
-            Text('QQQ'),
-            Text('QQQ'),
-            Text('QQQ'),
-            Text('QQQ'),
-            Text('QQQ'),
-            Text('QQQ'),
-          ],
-        ),
-      ),
-      expandWidget: (isExpand) => Padding(
-            child: Icon(
-              isExpand ? Icons.arrow_upward : Icons.arrow_downward,
-              size: 26,
+  KeyboardBarBuilder _getBarBuilder() {
+    return KeyboardBarBuilder(
+        barBuilder: (context, expandWidget) {
+          return PreferredSize(
+            child: Container(
+              height: 50,
+              width: double.infinity,
+              color: Colors.grey,
+              child: Row(children: [
+                Expanded(child: _alternativeBtn('AAA')),
+                Expanded(child: _alternativeBtn('BBB')),
+                Expanded(child: _alternativeBtn('CCC')),
+                expandWidget
+              ]),
             ),
-            padding: EdgeInsets.only(right: 15),
-          ));
+            preferredSize: Size.fromHeight(50),
+          );
+        },
+        footWidget: Builder(
+          builder: (context) => GridView.count(
+            crossAxisCount: 3,
+            childAspectRatio: 2.5,
+            children: [
+              _alternativeBtn('QQQ'),
+              _alternativeBtn('QQQ'),
+              _alternativeBtn('QQQ'),
+              _alternativeBtn('QQQ'),
+              _alternativeBtn('QQQ'),
+              _alternativeBtn('QQQ'),
+              _alternativeBtn('QQQ'),
+              _alternativeBtn('QQQ'),
+              _alternativeBtn('QQQ'),
+            ],
+          ),
+        ),
+        expandWidget: (isExpand) => Padding(
+              child: Icon(
+                isExpand ? Icons.arrow_upward : Icons.arrow_downward,
+                size: 26,
+              ),
+              padding: EdgeInsets.only(right: 15),
+            ));
+  }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    CoolKeyboard.refreshAncestor(context);
+    //5.更新
+    KeyboardManager.refreshAncestor(context);
+  }
+
+  Widget _alternativeBtn(String text) {
+    return InkWell(
+      child: Text(text),
+      onTap: () {
+        KeyboardManager.addText(text);
+      },
+    );
   }
 
   @override
@@ -117,6 +130,7 @@ class _MyTextFieldState extends State<MyTextField> {
       margin: EdgeInsets.only(bottom: 20),
       child: TextField(
         decoration: InputDecoration(hintText: '请输入内容'),
+        //4.使用自定义键盘
         keyboardType: WriteKeyboard.inputType,
         textInputAction: TextInputAction.newline,
         maxLines: null,

@@ -9,10 +9,9 @@ import 'keyboard_controller.dart';
 import 'keyboard_media_query.dart';
 
 typedef GetKeyboardHeight = double Function(BuildContext context);
-typedef KeyboardBuilder = Widget Function(
-    BuildContext context, KeyboardController controller);
+typedef KeyboardBuilder = Widget Function(BuildContext context, KeyboardController controller);
 
-class CoolKeyboard {
+class KeyboardManager {
   static JSONMethodCodec _codec = const JSONMethodCodec();
   static KeyboardConfig _currentKeyboard;
   static Map<CKTextInputType, KeyboardConfig> _keyboards = {};
@@ -29,14 +28,13 @@ class CoolKeyboard {
 
   static init(BuildContext context) {
     _context = context;
-    interceptorInput();
+    _interceptorInput();
   }
 
-  static interceptorInput() {
+  static _interceptorInput() {
     if (isInterceptor) return;
     isInterceptor = true;
-    defaultBinaryMessenger.setMockMessageHandler(SystemChannels.textInput.name,
-        (ByteData data) async {
+    defaultBinaryMessenger.setMockMessageHandler(SystemChannels.textInput.name, (ByteData data) async {
       var methodCall = _codec.decodeMethodCall(data);
       switch (methodCall.method) {
         case 'TextInput.show':
@@ -44,8 +42,7 @@ class CoolKeyboard {
             openKeyboard();
             return _codec.encodeSuccessEnvelope(null);
           } else {
-            return await _sendPlatformMessage(
-                SystemChannels.textInput.name, data);
+            return await _sendPlatformMessage(SystemChannels.textInput.name, data);
           }
           break;
         case 'TextInput.hide':
@@ -53,8 +50,7 @@ class CoolKeyboard {
             hideKeyboard();
             return _codec.encodeSuccessEnvelope(null);
           } else {
-            return await _sendPlatformMessage(
-                SystemChannels.textInput.name, data);
+            return await _sendPlatformMessage(SystemChannels.textInput.name, data);
           }
           break;
         case 'TextInput.setEditingState':
@@ -78,21 +74,16 @@ class CoolKeyboard {
               _currentKeyboard = keyboardConfig;
               _keyboardController = KeyboardController(client: client)
                 ..addListener(() {
-                  var callbackMethodCall = MethodCall(
-                      "TextInputClient.updateEditingState", [
-                    _keyboardController.client.connectionId,
-                    _keyboardController.value.toJSON()
-                  ]);
+                  var callbackMethodCall = MethodCall("TextInputClient.updateEditingState",
+                      [_keyboardController.client.connectionId, _keyboardController.value.toJSON()]);
                   defaultBinaryMessenger.handlePlatformMessage(
-                      SystemChannels.textInput.name,
-                      _codec.encodeMethodCall(callbackMethodCall),
-                      (data) {});
+                      SystemChannels.textInput.name, _codec.encodeMethodCall(callbackMethodCall), (data) {});
                 });
             }
           });
           if (client != null) {
-            await _sendPlatformMessage(SystemChannels.textInput.name,
-                _codec.encodeMethodCall(MethodCall('TextInput.hide')));
+            await _sendPlatformMessage(
+                SystemChannels.textInput.name, _codec.encodeMethodCall(MethodCall('TextInput.hide')));
             return _codec.encodeSuccessEnvelope(null);
           } else {
             hideKeyboard(animation: false);
@@ -100,20 +91,17 @@ class CoolKeyboard {
           }
           break;
       }
-      ByteData response =
-          await _sendPlatformMessage(SystemChannels.textInput.name, data);
+      ByteData response = await _sendPlatformMessage(SystemChannels.textInput.name, data);
       return response;
     });
   }
 
   static refreshAncestor(BuildContext context) {
     _context = context;
-    _ancestorState = _context
-        .ancestorStateOfType(const TypeMatcher<KeyboardMediaQueryState>());
+    _ancestorState = _context.ancestorStateOfType(const TypeMatcher<KeyboardMediaQueryState>());
   }
 
-  static Future<ByteData> _sendPlatformMessage(
-      String channel, ByteData message) {
+  static Future<ByteData> _sendPlatformMessage(String channel, ByteData message) {
     final Completer<ByteData> completer = Completer<ByteData>();
     window.sendPlatformMessage(channel, message, (ByteData reply) {
       try {
@@ -123,8 +111,7 @@ class CoolKeyboard {
           exception: exception,
           stack: stack,
           library: 'services library',
-          context:
-              StringProperty('', 'during a platform message response callback'),
+          context: StringProperty('', 'during a platform message response callback'),
         ));
       }
     });
@@ -167,10 +154,8 @@ class CoolKeyboard {
   static hideKeyboard({bool animation = true}) {
     if (_keyboardEntry != null && _pageKey != null) {
       _keyboardHeight = null;
-      _pageKey.currentState.animationController
-          .addStatusListener((AnimationStatus status) {
-        if (status == AnimationStatus.dismissed ||
-            status == AnimationStatus.completed) {
+      _pageKey.currentState.animationController.addStatusListener((AnimationStatus status) {
+        if (status == AnimationStatus.dismissed || status == AnimationStatus.completed) {
           if (_keyboardEntry != null) {
             _keyboardEntry.remove();
             _keyboardEntry = null;
@@ -196,11 +181,17 @@ class CoolKeyboard {
     }
   }
 
+  static addText(String text) {
+    if (_keyboardController != null) {
+      _keyboardController.addText(text);
+    }
+  }
+
   static sendPerformAction(TextInputAction action) {
-    var callbackMethodCall = MethodCall("TextInputClient.performAction",
-        [_keyboardController.client.connectionId, action.toString()]);
-    defaultBinaryMessenger.handlePlatformMessage("flutter/textinput",
-        _codec.encodeMethodCall(callbackMethodCall), (data) {});
+    var callbackMethodCall =
+        MethodCall("TextInputClient.performAction", [_keyboardController.client.connectionId, action.toString()]);
+    defaultBinaryMessenger.handlePlatformMessage(
+        "flutter/textinput", _codec.encodeMethodCall(callbackMethodCall), (data) {});
   }
 }
 
@@ -226,10 +217,8 @@ class InputClient {
             autocorrect: encoded[1]['autocorrect'],
             actionLabel: encoded[1]['actionLabel'],
             inputAction: _toTextInputAction(encoded[1]['inputAction']),
-            textCapitalization:
-                _toTextCapitalization(encoded[1]['textCapitalization']),
-            keyboardAppearance:
-                _toBrightness(encoded[1]['keyboardAppearance'])));
+            textCapitalization: _toTextCapitalization(encoded[1]['textCapitalization']),
+            keyboardAppearance: _toBrightness(encoded[1]['keyboardAppearance'])));
   }
 
   static TextInputAction _toTextInputAction(String action) {
@@ -307,10 +296,7 @@ class CKTextInputType extends TextInputType {
   }
 
   factory CKTextInputType.fromJSON(Map<String, dynamic> encoded) {
-    return CKTextInputType(
-        name: encoded['name'],
-        signed: encoded['signed'],
-        decimal: encoded['decimal']);
+    return CKTextInputType(name: encoded['name'], signed: encoded['signed'], decimal: encoded['decimal']);
   }
 }
 
@@ -324,8 +310,7 @@ class KeyboardPage extends StatefulWidget {
   State<StatefulWidget> createState() => KeyboardPageState();
 }
 
-class KeyboardPageState extends State<KeyboardPage>
-    with SingleTickerProviderStateMixin {
+class KeyboardPageState extends State<KeyboardPage> with SingleTickerProviderStateMixin {
   AnimationController animationController;
   Animation<double> doubleAnimation;
   double bottom;
@@ -333,20 +318,17 @@ class KeyboardPageState extends State<KeyboardPage>
   @override
   void initState() {
     super.initState();
-    animationController = new AnimationController(
-        duration: new Duration(milliseconds: 100), vsync: this)
+    animationController = new AnimationController(duration: new Duration(milliseconds: 100), vsync: this)
       ..addListener(() => setState(() {}));
-    doubleAnimation = new Tween(begin: 0.0, end: widget.height)
-        .animate(animationController)
-          ..addListener(() => setState(() {}));
+    doubleAnimation = new Tween(begin: 0.0, end: widget.height).animate(animationController)
+      ..addListener(() => setState(() {}));
     animationController.forward(from: 0.0);
   }
 
   @override
   Widget build(BuildContext context) {
     return Positioned(
-        child: IntrinsicHeight(child: widget.child),
-        bottom: (widget.height - doubleAnimation.value) * -1);
+        child: IntrinsicHeight(child: widget.child), bottom: (widget.height - doubleAnimation.value) * -1);
   }
 
   @override
