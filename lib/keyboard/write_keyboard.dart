@@ -9,8 +9,7 @@ class WriteKeyboard extends StatefulWidget {
     return _WriteKeyboardState();
   }
 
-  static const CKTextInputType inputType =
-      const CKTextInputType(name: 'WriteKeyboard');
+  static const CKTextInputType inputType = const CKTextInputType(name: 'WriteKeyboard');
 
   static double getHeight(BuildContext ctx) {
     return 200.0 + 50.0;
@@ -80,10 +79,7 @@ class _WriteKeyboardState extends State<WriteKeyboard> {
               Expanded(
                 child: IndexedStack(
                   index: isExpandFooter ? 1 : 0,
-                  children: <Widget>[
-                    child,
-                    widget.keyboardBarBuilder.footWidget.build(context)
-                  ],
+                  children: <Widget>[child, widget.keyboardBarBuilder.footWidget.build(context)],
                 ),
               )
             ],
@@ -104,15 +100,11 @@ class _WriteKeyboardState extends State<WriteKeyboard> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           mainAxisSize: MainAxisSize.max,
-          children: row1
-              .map((e) => buildTextButton(isUpperCase ? e.toUpperCase() : e))
-              .toList(),
+          children: row1.map((e) => buildTextButton(isUpperCase ? e.toUpperCase() : e)).toList(),
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: row2
-              .map((e) => buildTextButton(isUpperCase ? e.toUpperCase() : e))
-              .toList(),
+          children: row2.map((e) => buildTextButton(isUpperCase ? e.toUpperCase() : e)).toList(),
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -127,11 +119,8 @@ class _WriteKeyboardState extends State<WriteKeyboard> {
               });
             })
           ]
-            ..addAll(row3
-                .map((e) => buildTextButton(isUpperCase ? e.toUpperCase() : e))
-                .toList())
-            ..add(buildButton(
-                Icon(Icons.backspace), () => widget.controller.deleteOne())),
+            ..addAll(row3.map((e) => buildTextButton(isUpperCase ? e.toUpperCase() : e)).toList())
+            ..add(buildDeleteButton()),
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -187,8 +176,7 @@ class _WriteKeyboardState extends State<WriteKeyboard> {
               })
             ]
               ..addAll(row3.map((e) => buildTextButton(e)).toList())
-              ..add(buildButton(
-                  Icon(Icons.backspace), () => widget.controller.deleteOne())),
+              ..add(buildDeleteButton()),
           ),
         ),
         Expanded(
@@ -247,8 +235,7 @@ class _WriteKeyboardState extends State<WriteKeyboard> {
               })
             ]
               ..addAll(row3.map((e) => buildTextButton(e)).toList())
-              ..add(buildButton(
-                  Icon(Icons.backspace), () => widget.controller.deleteOne())),
+              ..add(buildDeleteButton()),
           ),
         ),
         Expanded(
@@ -279,8 +266,7 @@ class _WriteKeyboardState extends State<WriteKeyboard> {
           width: 100,
           margin: EdgeInsets.all(5),
           alignment: Alignment.center,
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5), color: Color(0xFFDEDEDE)),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), color: Color(0xFFDEDEDE)),
           child: Text(
             '空格',
             style: TextStyle(fontSize: 16),
@@ -290,8 +276,7 @@ class _WriteKeyboardState extends State<WriteKeyboard> {
   }
 
   Widget buildNewlineButton() {
-    if (widget.controller.client.configuration.inputAction ==
-        TextInputAction.done) {
+    if (widget.controller.client.configuration.inputAction == TextInputAction.done) {
       return buildTextButton('完成', fontSize: 16, onTap: () {
         return widget.controller.doneAction();
       });
@@ -300,6 +285,22 @@ class _WriteKeyboardState extends State<WriteKeyboard> {
         return widget.controller.addText('\n');
       });
     }
+  }
+
+  Widget buildDeleteButton() {
+    return ConstrainedBox(
+        constraints: BoxConstraints(minWidth: buttonWidth, minHeight: 45, maxHeight: 45),
+        child: Material(
+          color: Colors.transparent,
+          child: GestureDetector(
+            child: Center(
+              child: Icon(Icons.backspace),
+            ),
+            onPanUpdate: (_) {
+              widget.controller.deleteOne();
+            },
+          ),
+        ));
   }
 
   Widget buildTextButton(
@@ -322,8 +323,7 @@ class _WriteKeyboardState extends State<WriteKeyboard> {
 
   Widget buildButton(Widget widget, GestureTapCallback onTap) {
     return ConstrainedBox(
-        constraints:
-            BoxConstraints(minWidth: buttonWidth, minHeight: 45, maxHeight: 45),
+        constraints: BoxConstraints(minWidth: buttonWidth, minHeight: 45, maxHeight: 45),
         child: Material(
           color: Colors.transparent,
           child: InkWell(
@@ -338,12 +338,10 @@ class _WriteKeyboardState extends State<WriteKeyboard> {
 
 class KeyboardBarBuilder {
   final Builder footWidget;
-  final PreferredSizeWidget Function(BuildContext context, Widget expandWidget)
-      barBuilder;
+  final PreferredSizeWidget Function(BuildContext context, Widget expandWidget) barBuilder;
   final Widget Function(bool isExpand) expandWidget;
 
-  const KeyboardBarBuilder(
-      {this.barBuilder, this.expandWidget, this.footWidget});
+  const KeyboardBarBuilder({this.barBuilder, this.expandWidget, this.footWidget});
 
   Widget build(context, onTap, isExpand) {
     return barBuilder(

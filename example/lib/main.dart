@@ -27,9 +27,36 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   @override
+  Widget build(BuildContext context) {
+    return KeyboardMediaQuery(
+      child: Builder(
+        builder: (context) {
+          return Scaffold(
+            body: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () {
+                CoolKeyboard.hideKeyboard();
+              },
+              child: MyTextField(),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class MyTextField extends StatefulWidget {
+  @override
+  _MyTextFieldState createState() => _MyTextFieldState();
+}
+
+class _MyTextFieldState extends State<MyTextField> {
+  @override
   void initState() {
     super.initState();
     WriteKeyboard.register(keyboardBarBuilder);
+    CoolKeyboard.init(context);
   }
 
   var keyboardBarBuilder = KeyboardBarBuilder(
@@ -38,7 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Container(
             height: 50,
             width: double.infinity,
-            color: Colors.red,
+            color: Colors.grey,
             child: Row(children: [
               Expanded(child: Text('AAA')),
               Expanded(child: Text('BBB')),
@@ -78,29 +105,21 @@ class _MyHomePageState extends State<MyHomePage> {
           ));
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    CoolKeyboard.refreshAncestor(context);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return KeyboardMediaQuery(
-      child: Builder(
-        builder: (context) {
-          CoolKeyboard.init(context);
-          return Scaffold(
-            body: GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: () {
-                CoolKeyboard.hideKeyboard();
-              },
-              child: Container(
-                alignment: Alignment.bottomCenter,
-                margin: EdgeInsets.only(bottom: 20),
-                child: TextField(
-                  keyboardType: WriteKeyboard.inputType,
-                  textInputAction: TextInputAction.newline,
-                  maxLines: null,
-                ),
-              ),
-            ),
-          );
-        },
+    return Container(
+      alignment: Alignment.bottomCenter,
+      margin: EdgeInsets.only(bottom: 20),
+      child: TextField(
+        decoration: InputDecoration(hintText: '请输入内容'),
+        keyboardType: WriteKeyboard.inputType,
+        textInputAction: TextInputAction.newline,
+        maxLines: null,
       ),
     );
   }
