@@ -125,16 +125,23 @@ class _MyTextFieldState extends State<MyTextField> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      alignment: Alignment.bottomCenter,
-      margin: EdgeInsets.only(bottom: 20),
-      child: TextField(
-        decoration: InputDecoration(hintText: '请输入内容'),
-        //4.使用自定义键盘
-        keyboardType: WriteKeyboard.inputType,
-        textInputAction: TextInputAction.newline,
-        maxLines: null,
-      ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: <Widget>[
+        TextField(
+          decoration: InputDecoration(hintText: '请输入内容'),
+          //4.使用自定义键盘
+          keyboardType: WriteKeyboard.inputType,
+          textInputAction: TextInputAction.newline,
+          maxLines: null,
+        ),
+        RaisedButton(
+          child: Text('reset keyboard'),
+          onPressed: () {
+            KeyboardManager.resetKeyboard();
+          },
+        )
+      ],
     );
   }
 }

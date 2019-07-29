@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_custom_keyboard/keyboard/keyboard.dart';
 
 import 'keyboard_controller.dart';
 import 'keyboard_manager.dart';
 
-class WriteKeyboard extends StatefulWidget {
+class WriteKeyboard extends StatefulWidget with Keyboard {
+  _WriteKeyboardState _state;
+
   @override
   State<StatefulWidget> createState() {
-    return _WriteKeyboardState();
+    _state = _WriteKeyboardState();
+    return _state;
   }
 
   static const CKTextInputType inputType = const CKTextInputType(name: 'WriteKeyboard');
@@ -18,7 +22,7 @@ class WriteKeyboard extends StatefulWidget {
   final KeyboardController controller;
   final KeyboardBarBuilder keyboardBarBuilder;
 
-  const WriteKeyboard({this.controller, this.keyboardBarBuilder});
+  WriteKeyboard({this.controller, this.keyboardBarBuilder});
 
   static register(KeyboardBarBuilder builder) {
     KeyboardManager.addKeyboard(
@@ -31,6 +35,11 @@ class WriteKeyboard extends StatefulWidget {
               );
             },
             getHeight: WriteKeyboard.getHeight));
+  }
+
+  @override
+  void resetKeyboard() {
+    _state?.resetKeyboard();
   }
 }
 
@@ -266,7 +275,8 @@ class _WriteKeyboardState extends State<WriteKeyboard> {
           width: 100,
           margin: EdgeInsets.all(5),
           alignment: Alignment.center,
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(5), color: Color(0xFFDEDEDE)),
+          decoration:
+              BoxDecoration(borderRadius: BorderRadius.circular(5), color: Color(0xFFDEDEDE)),
           child: Text(
             '空格',
             style: TextStyle(fontSize: 16),
@@ -333,6 +343,13 @@ class _WriteKeyboardState extends State<WriteKeyboard> {
             onTap: onTap,
           ),
         ));
+  }
+
+  void resetKeyboard() {
+    setState(() {
+      type = TYPE_NORMAL;
+      isExpandFooter = false;
+    });
   }
 }
 
