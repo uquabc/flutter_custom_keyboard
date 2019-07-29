@@ -10,7 +10,8 @@ import 'keyboard_controller.dart';
 import 'keyboard_media_query.dart';
 
 typedef GetKeyboardHeight = double Function(BuildContext context);
-typedef KeyboardBuilder = Widget Function(BuildContext context, KeyboardController controller);
+typedef KeyboardBuilder = Widget Function(
+    Key key, BuildContext context, KeyboardController controller);
 
 class KeyboardManager {
   static JSONMethodCodec _codec = const JSONMethodCodec();
@@ -22,6 +23,7 @@ class KeyboardManager {
   static OverlayEntry _keyboardEntry;
   static KeyboardController _keyboardController;
   static GlobalKey<KeyboardPageState> _pageKey;
+  static GlobalKey<KeyboardState> _keyboardKey;
   static bool isInterceptor = false;
 
   static double get keyboardHeight => _keyboardHeight;
@@ -129,6 +131,7 @@ class KeyboardManager {
   static openKeyboard() {
     if (_keyboardEntry != null) return;
     _pageKey = GlobalKey<KeyboardPageState>();
+    _keyboardKey = GlobalKey<KeyboardState>();
     _keyboardHeight = _currentKeyboard.getHeight(_context);
     _ancestorState.update();
 
@@ -137,7 +140,7 @@ class KeyboardManager {
       if (_currentKeyboard != null && _keyboardHeight != null) {
         return KeyboardPage(
             key: tempKey,
-            child: _currentKeyboard.builder(ctx, _keyboardController),
+            child: _currentKeyboard.builder(_keyboardKey, ctx, _keyboardController),
             height: _keyboardHeight);
       } else {
         return Container();
@@ -172,6 +175,7 @@ class KeyboardManager {
       }
     }
     _pageKey = null;
+    _keyboardKey = null;
     _ancestorState.update();
   }
 
@@ -184,8 +188,8 @@ class KeyboardManager {
   }
 
   static resetKeyboard() {
-    if (_pageKey != null) {
-      _pageKey.currentState.resetKeyboard();
+    if (_keyboardKey != null) {
+      _keyboardKey.currentState.resetKeyboard();
     }
   }
 
@@ -354,11 +358,5 @@ class KeyboardPageState extends State<KeyboardPage> with SingleTickerProviderSta
 
   exitKeyboard() {
     animationController.reverse();
-  }
-
-  resetKeyboard() {
-    if (widget.child is Keyboard) {
-      (widget.child as Keyboard).resetKeyboard();
-    }
   }
 }

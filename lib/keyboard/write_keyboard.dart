@@ -4,13 +4,11 @@ import 'package:flutter_custom_keyboard/keyboard/keyboard.dart';
 import 'keyboard_controller.dart';
 import 'keyboard_manager.dart';
 
-class WriteKeyboard extends StatefulWidget with Keyboard {
-  _WriteKeyboardState _state;
-
+class WriteKeyboard extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    _state = _WriteKeyboardState();
-    return _state;
+    print('===>createState(),hashCode:$hashCode');
+    return _WriteKeyboardState();
   }
 
   static const CKTextInputType inputType = const CKTextInputType(name: 'WriteKeyboard');
@@ -22,14 +20,15 @@ class WriteKeyboard extends StatefulWidget with Keyboard {
   final KeyboardController controller;
   final KeyboardBarBuilder keyboardBarBuilder;
 
-  WriteKeyboard({this.controller, this.keyboardBarBuilder});
+  WriteKeyboard({Key key, this.controller, this.keyboardBarBuilder}) : super(key: key);
 
   static register(KeyboardBarBuilder builder) {
     KeyboardManager.addKeyboard(
         WriteKeyboard.inputType,
         KeyboardConfig(
-            builder: (context, controller) {
+            builder: (key, context, controller) {
               return WriteKeyboard(
+                key: key,
                 controller: controller,
                 keyboardBarBuilder: builder,
               );
@@ -37,13 +36,14 @@ class WriteKeyboard extends StatefulWidget with Keyboard {
             getHeight: WriteKeyboard.getHeight));
   }
 
-  @override
-  void resetKeyboard() {
-    _state?.resetKeyboard();
-  }
+//  @override
+//  void resetKeyboard() {
+//    print('===>_WriteKeyboard.state:${_state},hashCode:$hashCode');
+//    _state?.resetKeyboard();
+//  }
 }
 
-class _WriteKeyboardState extends State<WriteKeyboard> {
+class _WriteKeyboardState extends KeyboardState<WriteKeyboard> {
   static const TYPE_NORMAL = 1;
   static const TYPE_NORMAL_UPPER = 2;
   static const TYPE_NUMBER = 3;
@@ -345,7 +345,9 @@ class _WriteKeyboardState extends State<WriteKeyboard> {
         ));
   }
 
+  @override
   void resetKeyboard() {
+    print('===>WriteKeyboard.resetKeyboard()');
     setState(() {
       type = TYPE_NORMAL;
       isExpandFooter = false;
