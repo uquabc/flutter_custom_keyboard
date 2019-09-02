@@ -306,7 +306,10 @@ class _WriteKeyboardState extends KeyboardState<WriteKeyboard> {
             child: Center(
               child: Icon(Icons.backspace),
             ),
-            onPanUpdate: (_) {
+            onTap: () {
+              widget.controller.deleteOne();
+            },
+            onLongPressMoveUpdate: (_) {
               widget.controller.deleteOne();
             },
           ),
@@ -347,7 +350,6 @@ class _WriteKeyboardState extends KeyboardState<WriteKeyboard> {
 
   @override
   void resetKeyboard() {
-    print('===>WriteKeyboard.resetKeyboard()');
     setState(() {
       type = TYPE_NORMAL;
       isExpandFooter = false;

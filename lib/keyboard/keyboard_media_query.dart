@@ -17,7 +17,8 @@ class KeyboardMediaQueryState extends State<KeyboardMediaQuery> {
     var data = MediaQuery.of(context);
     return MediaQuery(
         child: widget.child,
-        data: data.copyWith(viewInsets: data.viewInsets.copyWith(bottom: KeyboardManager.keyboardHeight)));
+        data: data.copyWith(
+            viewInsets: data.viewInsets.copyWith(bottom: KeyboardManager.keyboardHeight)));
   }
 
   update() {
