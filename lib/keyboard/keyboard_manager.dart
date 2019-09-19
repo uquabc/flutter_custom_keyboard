@@ -34,11 +34,16 @@ class KeyboardManager {
     _interceptorInput();
   }
 
+  static dispose() {
+    _unInterceptorInput();
+  }
+
   static _interceptorInput() {
     if (isInterceptor) return;
     isInterceptor = true;
-    defaultBinaryMessenger.setMockMessageHandler(SystemChannels.textInput.name,
-        (ByteData data) async {
+    // TODO: flutter 1.7使用
+//    defaultBinaryMessenger.setMockMessageHandler(SystemChannels.textInput.name, (ByteData data) async {
+    BinaryMessages.setMockMessageHandler(SystemChannels.textInput.name, (ByteData data) async {
       var methodCall = _codec.decodeMethodCall(data);
       switch (methodCall.method) {
         case 'TextInput.show':
@@ -82,7 +87,9 @@ class KeyboardManager {
                     _keyboardController.client.connectionId,
                     _keyboardController.value.toJSON()
                   ]);
-                  defaultBinaryMessenger.handlePlatformMessage(SystemChannels.textInput.name,
+                  // TODO: flutter 1.7使用
+//                  defaultBinaryMessenger.handlePlatformMessage(SystemChannels.textInput.name, _codec.encodeMethodCall(callbackMethodCall), (data) {});
+                  BinaryMessages.handlePlatformMessage(SystemChannels.textInput.name,
                       _codec.encodeMethodCall(callbackMethodCall), (data) {});
                 });
             }
@@ -102,6 +109,11 @@ class KeyboardManager {
     });
   }
 
+  static _unInterceptorInput() {
+    BinaryMessages.setMockMessageHandler(SystemChannels.textInput.name, null);
+    isInterceptor = false;
+  }
+
   static refreshAncestor(BuildContext context) {
     _context = context;
     _ancestorState = _context.ancestorStateOfType(const TypeMatcher<KeyboardMediaQueryState>());
@@ -117,7 +129,9 @@ class KeyboardManager {
           exception: exception,
           stack: stack,
           library: 'services library',
-          context: StringProperty('', 'during a platform message response callback'),
+          //todo 在 Flutter1.7中使用下面的代码
+//          context: StringProperty('', 'during a platform message response callback'),
+          context: 'during a platform message response callback',
         ));
       }
     });
@@ -202,7 +216,10 @@ class KeyboardManager {
   static sendPerformAction(TextInputAction action) {
     var callbackMethodCall = MethodCall("TextInputClient.performAction",
         [_keyboardController.client.connectionId, action.toString()]);
-    defaultBinaryMessenger.handlePlatformMessage(
+    // TODO: 在flutter 1.7中使用
+//    defaultBinaryMessenger.handlePlatformMessage(
+//        "flutter/textinput", _codec.encodeMethodCall(callbackMethodCall), (data) {});
+    BinaryMessages.handlePlatformMessage(
         "flutter/textinput", _codec.encodeMethodCall(callbackMethodCall), (data) {});
   }
 }

@@ -63,6 +63,12 @@ class _MyTextFieldState extends State<MyTextField> {
     KeyboardManager.init(context);
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    KeyboardManager.dispose();
+  }
+
   KeyboardBarBuilder _getBarBuilder() {
     return KeyboardBarBuilder(
         barBuilder: (context, expandWidget) {
@@ -83,20 +89,20 @@ class _MyTextFieldState extends State<MyTextField> {
         },
         footWidget: Builder(
           builder: (context) => GridView.count(
-            crossAxisCount: 3,
-            childAspectRatio: 2.5,
-            children: [
-              _alternativeBtn('QQQ'),
-              _alternativeBtn('QQQ'),
-              _alternativeBtn('QQQ'),
-              _alternativeBtn('QQQ'),
-              _alternativeBtn('QQQ'),
-              _alternativeBtn('QQQ'),
-              _alternativeBtn('QQQ'),
-              _alternativeBtn('QQQ'),
-              _alternativeBtn('QQQ'),
-            ],
-          ),
+                crossAxisCount: 3,
+                childAspectRatio: 2.5,
+                children: [
+                  _alternativeBtn('QQQ'),
+                  _alternativeBtn('QQQ'),
+                  _alternativeBtn('QQQ'),
+                  _alternativeBtn('QQQ'),
+                  _alternativeBtn('QQQ'),
+                  _alternativeBtn('QQQ'),
+                  _alternativeBtn('QQQ'),
+                  _alternativeBtn('QQQ'),
+                  _alternativeBtn('QQQ'),
+                ],
+              ),
         ),
         expandWidget: (isExpand) => Padding(
               child: Icon(
