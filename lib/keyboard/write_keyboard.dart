@@ -7,7 +7,6 @@ import 'keyboard_manager.dart';
 class WriteKeyboard extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    print('===>createState(),hashCode:$hashCode');
     return _WriteKeyboardState();
   }
 
