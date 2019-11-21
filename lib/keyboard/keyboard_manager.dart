@@ -10,8 +10,7 @@ import 'keyboard_controller.dart';
 import 'keyboard_media_query.dart';
 
 typedef GetKeyboardHeight = double Function(BuildContext context);
-typedef KeyboardBuilder = Widget Function(
-    Key key, BuildContext context, KeyboardController controller);
+typedef KeyboardBuilder = Widget Function(Key key, BuildContext context, KeyboardController controller);
 
 class KeyboardManager {
   static JSONMethodCodec _codec = const JSONMethodCodec();
@@ -41,9 +40,7 @@ class KeyboardManager {
   static _interceptorInput() {
     if (isInterceptor) return;
     isInterceptor = true;
-    // TODO: flutter 1.7使用
-//    defaultBinaryMessenger.setMockMessageHandler(SystemChannels.textInput.name, (ByteData data) async {
-    BinaryMessages.setMockMessageHandler(SystemChannels.textInput.name, (ByteData data) async {
+    defaultBinaryMessenger.setMockMessageHandler(SystemChannels.textInput.name, (ByteData data) async {
       var methodCall = _codec.decodeMethodCall(data);
       switch (methodCall.method) {
         case 'TextInput.show':
@@ -83,20 +80,16 @@ class KeyboardManager {
               _currentKeyboard = keyboardConfig;
               _keyboardController = KeyboardController(client: client)
                 ..addListener(() {
-                  var callbackMethodCall = MethodCall("TextInputClient.updateEditingState", [
-                    _keyboardController.client.connectionId,
-                    _keyboardController.value.toJSON()
-                  ]);
-                  // TODO: flutter 1.7使用
-//                  defaultBinaryMessenger.handlePlatformMessage(SystemChannels.textInput.name, _codec.encodeMethodCall(callbackMethodCall), (data) {});
-                  BinaryMessages.handlePlatformMessage(SystemChannels.textInput.name,
-                      _codec.encodeMethodCall(callbackMethodCall), (data) {});
+                  var callbackMethodCall = MethodCall("TextInputClient.updateEditingState",
+                      [_keyboardController.client.connectionId, _keyboardController.value.toJSON()]);
+                  defaultBinaryMessenger.handlePlatformMessage(
+                      SystemChannels.textInput.name, _codec.encodeMethodCall(callbackMethodCall), (data) {});
                 });
             }
           });
           if (client != null) {
-            await _sendPlatformMessage(SystemChannels.textInput.name,
-                _codec.encodeMethodCall(MethodCall('TextInput.hide')));
+            await _sendPlatformMessage(
+                SystemChannels.textInput.name, _codec.encodeMethodCall(MethodCall('TextInput.hide')));
             return _codec.encodeSuccessEnvelope(null);
           } else {
             hideKeyboard(animation: false);
@@ -129,9 +122,7 @@ class KeyboardManager {
           exception: exception,
           stack: stack,
           library: 'services library',
-          //todo 在 Flutter1.7中使用下面的代码
-//          context: StringProperty('', 'during a platform message response callback'),
-          context: 'during a platform message response callback',
+          context: StringProperty('', 'during a platform message response callback'),
         ));
       }
     });
@@ -214,12 +205,9 @@ class KeyboardManager {
   }
 
   static sendPerformAction(TextInputAction action) {
-    var callbackMethodCall = MethodCall("TextInputClient.performAction",
-        [_keyboardController.client.connectionId, action.toString()]);
-    // TODO: 在flutter 1.7中使用
-//    defaultBinaryMessenger.handlePlatformMessage(
-//        "flutter/textinput", _codec.encodeMethodCall(callbackMethodCall), (data) {});
-    BinaryMessages.handlePlatformMessage(
+    var callbackMethodCall =
+        MethodCall("TextInputClient.performAction", [_keyboardController.client.connectionId, action.toString()]);
+    defaultBinaryMessenger.handlePlatformMessage(
         "flutter/textinput", _codec.encodeMethodCall(callbackMethodCall), (data) {});
   }
 }
@@ -325,8 +313,7 @@ class CKTextInputType extends TextInputType {
   }
 
   factory CKTextInputType.fromJSON(Map<String, dynamic> encoded) {
-    return CKTextInputType(
-        name: encoded['name'], signed: encoded['signed'], decimal: encoded['decimal']);
+    return CKTextInputType(name: encoded['name'], signed: encoded['signed'], decimal: encoded['decimal']);
   }
 }
 
@@ -348,9 +335,8 @@ class KeyboardPageState extends State<KeyboardPage> with SingleTickerProviderSta
   @override
   void initState() {
     super.initState();
-    animationController =
-        new AnimationController(duration: new Duration(milliseconds: 100), vsync: this)
-          ..addListener(() => setState(() {}));
+    animationController = new AnimationController(duration: new Duration(milliseconds: 100), vsync: this)
+      ..addListener(() => setState(() {}));
     doubleAnimation = new Tween(begin: 0.0, end: widget.height).animate(animationController)
       ..addListener(() => setState(() {}));
     animationController.forward(from: 0.0);
@@ -359,8 +345,7 @@ class KeyboardPageState extends State<KeyboardPage> with SingleTickerProviderSta
   @override
   Widget build(BuildContext context) {
     return Positioned(
-        child: IntrinsicHeight(child: widget.child),
-        bottom: (widget.height - doubleAnimation.value) * -1);
+        child: IntrinsicHeight(child: widget.child), bottom: (widget.height - doubleAnimation.value) * -1);
   }
 
   @override
