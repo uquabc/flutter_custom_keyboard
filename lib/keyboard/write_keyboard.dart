@@ -75,7 +75,7 @@ class _WriteKeyboardState extends KeyboardState<WriteKeyboard> {
           height: WriteKeyboard.getHeight(context),
           width: mediaQuery.size.width,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.surface,
           ),
           child: Column(
             children: <Widget>[
@@ -275,10 +275,10 @@ class _WriteKeyboardState extends KeyboardState<WriteKeyboard> {
           margin: EdgeInsets.all(5),
           alignment: Alignment.center,
           decoration:
-              BoxDecoration(borderRadius: BorderRadius.circular(5), color: Color(0xFFDEDEDE)),
+              BoxDecoration(borderRadius: BorderRadius.circular(5), color: Theme.of(context).dividerColor),
           child: Text(
             '空格',
-            style: TextStyle(fontSize: 16),
+            style: TextStyle(fontSize: 16,color: Theme.of(context).colorScheme.onSurface),
           ),
         ),
         () => widget.controller.addText(" "));
