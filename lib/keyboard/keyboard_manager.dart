@@ -105,6 +105,8 @@ class KeyboardManager {
   static _unInterceptorInput() {
     BinaryMessages.setMockMessageHandler(SystemChannels.textInput.name, null);
     isInterceptor = false;
+    _keyboardEntry?.remove();
+    _keyboardEntry = null;
   }
 
   static refreshAncestor(BuildContext context) {
@@ -206,7 +208,7 @@ class KeyboardManager {
 
   static sendPerformAction(TextInputAction action) {
     var callbackMethodCall =
-        MethodCall("TextInputClient.performAction", [_keyboardController.client.connectionId, action.toString()]);
+    MethodCall("TextInputClient.performAction", [_keyboardController.client.connectionId, action.toString()]);
     defaultBinaryMessenger.handlePlatformMessage(
         "flutter/textinput", _codec.encodeMethodCall(callbackMethodCall), (data) {});
   }
