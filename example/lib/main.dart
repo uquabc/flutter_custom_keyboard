@@ -17,9 +17,9 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({Key? key, this.title}) : super(key: key);
 
-  final String title;
+  final String? title;
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -141,7 +141,7 @@ class _MyTextFieldState extends State<MyTextField> {
           textInputAction: TextInputAction.newline,
           maxLines: null,
         ),
-        RaisedButton(
+        ElevatedButton(
           child: Text('reset keyboard'),
           onPressed: () {
             KeyboardManager.resetKeyboard();

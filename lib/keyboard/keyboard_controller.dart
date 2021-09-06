@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'keyboard_manager.dart';
 
 class KeyboardController extends ValueNotifier<TextEditingValue> {
-  final InputClient client;
+  final InputClient? client;
 
-  KeyboardController({TextEditingValue value, this.client}) : super(value == null ? TextEditingValue.empty : value);
+  KeyboardController({TextEditingValue? value, this.client}) : super(value == null ? TextEditingValue.empty : value);
 
   /// The current string the user is editing.
   String get text => value.text;

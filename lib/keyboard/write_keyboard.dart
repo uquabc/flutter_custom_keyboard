@@ -12,14 +12,14 @@ class WriteKeyboard extends StatefulWidget {
 
   static const CKTextInputType inputType = const CKTextInputType(name: 'WriteKeyboard');
 
-  static double getHeight(BuildContext ctx) {
+  static double getHeight(BuildContext? ctx) {
     return 200.0 + 50.0;
   }
 
-  final KeyboardController controller;
-  final KeyboardBarBuilder keyboardBarBuilder;
+  final KeyboardController? controller;
+  final KeyboardBarBuilder? keyboardBarBuilder;
 
-  WriteKeyboard({Key key, this.controller, this.keyboardBarBuilder}) : super(key: key);
+  WriteKeyboard({Key? key, this.controller, this.keyboardBarBuilder}) : super(key: key);
 
   static register(KeyboardBarBuilder builder) {
     KeyboardManager.addKeyboard(
@@ -55,7 +55,7 @@ class _WriteKeyboardState extends KeyboardState<WriteKeyboard> {
   Widget build(BuildContext context) {
     MediaQueryData mediaQuery = MediaQuery.of(context);
     buttonWidth = mediaQuery.size.width / 11;
-    Widget child;
+    Widget child = Container();
     switch (type) {
       case TYPE_NORMAL:
         child = buildNormalKeyboard(false);
@@ -79,7 +79,7 @@ class _WriteKeyboardState extends KeyboardState<WriteKeyboard> {
           ),
           child: Column(
             children: <Widget>[
-              widget.keyboardBarBuilder.build(context, () {
+              widget.keyboardBarBuilder!.build(context, () {
                 setState(() {
                   isExpandFooter = !isExpandFooter;
                 });
@@ -87,7 +87,7 @@ class _WriteKeyboardState extends KeyboardState<WriteKeyboard> {
               Expanded(
                 child: IndexedStack(
                   index: isExpandFooter ? 1 : 0,
-                  children: <Widget>[child, widget.keyboardBarBuilder.footWidget.build(context)],
+                  children: <Widget>[child, widget.keyboardBarBuilder!.footWidget!.build(context)],
                 ),
               )
             ],
@@ -281,17 +281,17 @@ class _WriteKeyboardState extends KeyboardState<WriteKeyboard> {
             style: TextStyle(fontSize: 16,color: Theme.of(context).colorScheme.onSurface),
           ),
         ),
-        () => widget.controller.addText(" "));
+        () => widget.controller!.addText(" "));
   }
 
   Widget buildNewlineButton() {
-    if (widget.controller.client.configuration.inputAction == TextInputAction.done) {
+    if (widget.controller!.client!.configuration!.inputAction == TextInputAction.done) {
       return buildTextButton('完成', fontSize: 16, onTap: () {
-        return widget.controller.doneAction();
+        return widget.controller!.doneAction();
       });
     } else {
       return buildTextButton('换行', fontSize: 16, onTap: () {
-        return widget.controller.addText('\n');
+        return widget.controller!.addText('\n');
       });
     }
   }
@@ -306,10 +306,10 @@ class _WriteKeyboardState extends KeyboardState<WriteKeyboard> {
               child: Icon(Icons.backspace),
             ),
             onTap: () {
-              widget.controller.deleteOne();
+              widget.controller!.deleteOne();
             },
             onLongPressMoveUpdate: (_) {
-              widget.controller.deleteOne();
+              widget.controller!.deleteOne();
             },
           ),
         ));
@@ -318,8 +318,8 @@ class _WriteKeyboardState extends KeyboardState<WriteKeyboard> {
   Widget buildTextButton(
     String title, {
     double fontSize = 22,
-    String value,
-    GestureTapCallback onTap,
+    String? value,
+    GestureTapCallback? onTap,
   }) {
     if (value == null) {
       value = title;
@@ -330,7 +330,7 @@ class _WriteKeyboardState extends KeyboardState<WriteKeyboard> {
           title,
           style: TextStyle(fontSize: fontSize),
         ),
-        onTap ?? () => widget.controller.addText(value));
+        onTap ?? (() => widget.controller!.addText(value!)));
   }
 
   Widget buildButton(Widget widget, GestureTapCallback onTap) {
@@ -357,17 +357,17 @@ class _WriteKeyboardState extends KeyboardState<WriteKeyboard> {
 }
 
 class KeyboardBarBuilder {
-  final Builder footWidget;
-  final PreferredSizeWidget Function(BuildContext context, Widget expandWidget) barBuilder;
-  final Widget Function(bool isExpand) expandWidget;
+  final Builder? footWidget;
+  final PreferredSizeWidget Function(BuildContext context, Widget expandWidget)? barBuilder;
+  final Widget Function(bool isExpand)? expandWidget;
 
   const KeyboardBarBuilder({this.barBuilder, this.expandWidget, this.footWidget});
 
   Widget build(context, onTap, isExpand) {
-    return barBuilder(
+    return barBuilder!(
         context,
         GestureDetector(
-          child: expandWidget(isExpand),
+          child: expandWidget!(isExpand),
           onTap: onTap,
         ));
   }
